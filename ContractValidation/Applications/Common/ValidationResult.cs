@@ -3,37 +3,47 @@
 /// <summary>
 /// Represents the result of a validation operation.
 /// </summary>
-public class ValidationResult<T>
+public sealed class ValidationResult<T>
 {
-	public T Value { get; }
+	public T? Value { get; }
+	public T? InvalidValue { get; }
 	public List<string> Errors { get; }
-	public bool IsValid => Errors == null || !Errors.Any();
-
-	private ValidationResult(T value, List<string> errors)
+	public bool IsValid => Errors == null || Errors.Count == 0;
+	
+	private ValidationResult(T? value, T? invalidValue, List<string> errors)
 	{
 		Value = value;
-		Errors = errors ?? new List<string>();
+		InvalidValue = invalidValue;
+		Errors = errors ?? [];
 	}
 
-	public static ValidationResult<T> Valid(T value) => new ValidationResult<T>(value, null);
-
-	public static ValidationResult<T> Invalid(List<string> errors) => new ValidationResult<T>(default, errors);
+	public static ValidationResult<T> Result(T validModel, T invalidModel, List<string> errors) => new(validModel, invalidModel, errors);
 
 	public ValidationResult<T> OnSuccess(Action<T> action)
 	{
-		if (IsValid)
+		if (!object.Equals(Value, default(T)))
 		{
-			action(Value);
+			action(Value!);
+		}
+		
+		return this;
+	}
+
+	public ValidationResult<T> OnFailure(Action<T, List<string>> action)
+	{
+		if (!IsValid)
+		{
+			action(InvalidValue, Errors);
 		}
 		return this;
 	}
 
-	public ValidationResult<T> OnFailure(Action<List<string>> action)
+	public (bool Success, object Data) HandleResponse()
 	{
-		if (!IsValid)
+		if (IsValid)
 		{
-			action(Errors);
+			return (true, Value);
 		}
-		return this;
+		return (false, new { InvalidValue, Errors });
 	}
 }

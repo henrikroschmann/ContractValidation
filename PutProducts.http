@@ -13,6 +13,15 @@ Accept-Language: en-US,en;q=0.5
       {
         "name": "test",
         "price": 4
+      },
+      {
+        "name": "",
+        "price": 6
+      },
+      {
+        "name": "test",
+        "price": 7
       }
+
     ]
 }

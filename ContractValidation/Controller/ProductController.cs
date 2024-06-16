@@ -1,26 +1,25 @@
-﻿using ContractValidation.Applications.Requests;
-using ContractValidation.Applications.Services;
-using ContractValidation.Contracts;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-
-namespace ContractValidation.Controller;
+﻿namespace ContractValidation.Controller;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class ProductController(IContractsValidationService validationService, IMediator mediator)
+public class ProductController(
+	IContractsValidationService validationService,
+	IMediator mediator) : ControllerBase
 {
 	private readonly IContractsValidationService _validationService = validationService;
-	private readonly IMediator __mediator = mediator;
+	private readonly IMediator _mediator = mediator;
 
 	[HttpPost]
-	public async Task<IActionResult> AddProducts(PutProductsRequest products)
+	public IActionResult AddProducts(PutProductsRequest products)
 	{
 		var validationResult = _validationService.Validate(products);
-		validationResult
-			.OnSuccess(validRecords => __mediator.Send(new ProductIngestionsRequest(validRecords)))
-			.OnFailure(errors => __mediator.Send(new RejectedProductsRequest(errors)));
+		var (Success, Data) = validationResult
+				.OnSuccess(validRecords => _mediator.Send(new ProductIngestionsRequest(validRecords)))
+				.OnFailure((invalidValue, errors) => _mediator.Send(new RejectedProductsRequest(invalidValue, errors)))
+				.HandleResponse();
 
-		return default;
+		return Success
+			? Ok(Data)
+			: BadRequest(Data);
 	}
 }

@@ -6,29 +6,40 @@ namespace ContractValidation.Applications.Services;
 
 public class ContractsValidationService : IContractsValidationService
 {
-	public ValidationResult<T> Validate<T>(T model) where T : class
+	public ValidationResult<T> Validate<T>(T input) where T : class, new()
 	{
-		var validationContext = new ValidationContext(model);
+		var invalidModel = new T();
+		var validationContext = new ValidationContext(input);
 		var validationResults = new List<ValidationResult>();
-		var isValid = Validator.TryValidateObject(model, validationContext, validationResults, true);
+		var isValid = Validator.TryValidateObject(input, validationContext, validationResults, true);
 
-
+		var errors = new List<string>();
 		if (!isValid)
 		{
-			var errors = validationResults.ConvertAll(r => r.ErrorMessage);
-			return ValidationResult<T>.Invalid(errors);
+			errors.AddRange(validationResults.Select(r => r.ErrorMessage));
 		}
 
-		var nestedErrors = ValidateListProperties(model);
-		if (nestedErrors.Any())
-		{
-			return ValidationResult<T>.Invalid(nestedErrors);
-		}
+		CopyNonListProperties(input, invalidModel);
 
-		return ValidationResult<T>.Valid(model);
+		var nestedErrors = ValidateListProperties(input, invalidModel);
+		errors.AddRange(nestedErrors);
+
+		return ValidationResult<T>.Result(input, invalidModel, errors);
 	}
 
-	private List<string> ValidateListProperties<T>(T model) where T : class
+	private static void CopyNonListProperties<T>(T source, T target) where T : class
+	{
+		var properties = typeof(T).GetProperties()
+			.Where(p => !typeof(IEnumerable).IsAssignableFrom(p.PropertyType) || p.PropertyType == typeof(string));
+
+		foreach (var property in properties)
+		{
+			var value = property.GetValue(source);
+			property.SetValue(target, value);
+		}
+	}
+
+	private static List<string> ValidateListProperties<T>(T model, T? invalidModel) where T : class
 	{
 		var errors = new List<string>();
 		var properties = typeof(T).GetProperties()
@@ -38,39 +49,50 @@ public class ContractsValidationService : IContractsValidationService
 		{
 			if (property.GetValue(model) is not IList list) continue;
 
-			var elementType = property.PropertyType.GetGenericArguments().FirstOrDefault(); // Get the type of elements in the list.
-			if (elementType == null) continue; // Skip if element type is not found.
+			var elementType = property.PropertyType.GetGenericArguments().FirstOrDefault();
+			if (elementType == null) continue;
 
-			var validItems = new ArrayList(); // List to hold valid items.
+			var validItems = new ArrayList();
+			var invalidItems = new ArrayList();
 
 			foreach (var item in list)
 			{
-				var validationContext = new ValidationContext(item); // Create validation context for list item.
-				var validationResults = new List<ValidationResult>(); // List to hold validation results for item.
-				var isValid = Validator.TryValidateObject(item, validationContext, validationResults, true); // Perform validation on list item.
+				var validationContext = new ValidationContext(item);
+				var validationResults = new List<ValidationResult>();
+				var isValid = Validator.TryValidateObject(item, validationContext, validationResults, true);
 
 				if (isValid)
 				{
-					validItems.Add(item); // Add valid item to validItems list.
+					validItems.Add(item);
 				}
 				else
 				{
-					errors.AddRange(validationResults.Select(r => r.ErrorMessage)); // Add error messages to errors list.
+					invalidItems.Add(item);
+					errors.AddRange(validationResults.Select(r => r.ErrorMessage));
 				}
 			}
 
 			var genericListType = typeof(List<>).MakeGenericType(elementType); // Create a generic list type.
-			var filteredList = (IList?)Activator.CreateInstance(genericListType); // Create an instance of the generic list.
+			var filteredList = (IList?)Activator.CreateInstance(genericListType);
+			var filterInvalidList = (IList?)Activator.CreateInstance(genericListType);
 
 			foreach (var validItem in validItems)
 			{
 				filteredList?.Add(validItem); // Add valid items to the filtered list.
 			}
 
-			property.SetValue(model, filteredList); // Set the filtered list back to the property.
+			foreach (var invalidItem in invalidItems)
+			{
+				filterInvalidList?.Add(invalidItem);
+			}
+
+			if (filterInvalidList?.Count > 0)
+			{
+				property.SetValue(invalidModel, filterInvalidList);
+			}
+			property.SetValue(model, filteredList); 
 		}
 
-		return errors; // Return the list of validation errors.
+		return errors;
 	}
-
 }
