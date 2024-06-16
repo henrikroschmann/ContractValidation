@@ -1,4 +1,4 @@
-﻿
+﻿using ContractValidation.Application.Abstractions;
 
 namespace ContractValidation.Api.Controller;
 

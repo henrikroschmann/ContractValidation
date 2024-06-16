@@ -5,16 +5,21 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContractValidation.Api", "ContractValidation\ContractValidation.Api.csproj", "{9251922A-7FE4-4F58-831B-FF29C4D0EBC1}"
 EndProject
-
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractValidation.Application", "ContractValidation.Application\ContractValidation.Application.csproj", "{B0577A9C-44D6-4C7E-8C91-15C7997C2162}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContractValidation.Application", "ContractValidation.Application\ContractValidation.Application.csproj", "{B0577A9C-44D6-4C7E-8C91-15C7997C2162}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractValidation.Contracts", "ContractValidation.Contracts\ContractValidation.Contracts.csproj", "{6C52AADB-9436-407C-BA25-03BD69643A9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContractValidation.Contracts", "ContractValidation.Contracts\ContractValidation.Contracts.csproj", "{6C52AADB-9436-407C-BA25-03BD69643A9B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{0C092F24-4825-4CFD-93AD-C608C6926E32}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A7555547-A285-4BAC-BC38-1A1EB0F6FF38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractValidation.Application.Tests", "ContractValidation.Application.Tests\ContractValidation.Application.Tests.csproj", "{EE79C120-3DEF-4306-B131-665C8BF0C368}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContractValidation.Application.Tests", "ContractValidation.Application.Tests\ContractValidation.Application.Tests.csproj", "{EE79C120-3DEF-4306-B131-665C8BF0C368}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requests", "Requests", "{77CE86D7-7AD2-40FC-AC7A-86D9602D8E6A}"
+	ProjectSection(SolutionItems) = preProject
+		..\Requets\http-client.env.json = ..\Requets\http-client.env.json
+		..\Requets\PutProducts.http = ..\Requets\PutProducts.http
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

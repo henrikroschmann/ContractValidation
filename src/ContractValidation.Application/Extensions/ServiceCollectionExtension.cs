@@ -1,4 +1,5 @@
-﻿using ContractValidation.Application.Services;
+﻿using ContractValidation.Application.Abstractions;
+using ContractValidation.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 

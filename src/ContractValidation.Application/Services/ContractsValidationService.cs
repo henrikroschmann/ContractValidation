@@ -1,8 +1,4 @@
-﻿using ContractValidation.Application.Common;
-using System.Collections;
-using System.ComponentModel.DataAnnotations;
-
-namespace ContractValidation.Application.Services;
+﻿namespace ContractValidation.Application.Services;
 
 public class ContractsValidationService : IContractsValidationService
 {
