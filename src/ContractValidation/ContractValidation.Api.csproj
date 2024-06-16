@@ -11,4 +11,9 @@
     <PackageReference Include="MediatR" Version="12.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ContractValidation.Application\ContractValidation.Application.csproj" />
+    <ProjectReference Include="..\ContractValidation.Contracts\ContractValidation.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,11 +1,10 @@
-﻿
-namespace ContractValidation.Applications.Requests;
+﻿namespace ContractValidation.Application.Requests;
 
 public sealed class RejectedProductsRequestHandler : IRequestHandler<RejectedProductsRequest, Unit>
 {
 	public Task<Unit> Handle(RejectedProductsRequest request, CancellationToken cancellationToken)
 	{
-        Console.WriteLine("Error");
-        return Task.FromResult(new Unit());
+		Console.WriteLine("Error");
+		return Task.FromResult(new Unit());
 	}
 }

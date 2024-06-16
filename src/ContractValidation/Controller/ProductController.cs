@@ -1,4 +1,6 @@
-﻿namespace ContractValidation.Controller;
+﻿
+
+namespace ContractValidation.Api.Controller;
 
 [ApiController]
 [Route("/api/[controller]")]

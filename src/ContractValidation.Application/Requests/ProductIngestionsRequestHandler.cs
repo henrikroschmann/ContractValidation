@@ -1,10 +1,10 @@
-﻿namespace ContractValidation.Applications.Requests;
+﻿namespace ContractValidation.Application.Requests;
 
 public sealed class ProductIngestionsRequestHandler : IRequestHandler<ProductIngestionsRequest, Unit>
 {
 	public Task<Unit> Handle(ProductIngestionsRequest request, CancellationToken cancellationToken)
 	{
-        Console.WriteLine("Hello");
+		Console.WriteLine("Hello");
 		return Task.FromResult(new Unit());
-    }
+	}
 }

@@ -1,6 +1,6 @@
-﻿using ContractValidation.Applications.Common;
+﻿using ContractValidation.Application.Common;
 
-namespace ContractValidation.Applications.Services;
+namespace ContractValidation.Application.Services;
 
 public interface IContractsValidationService
 {

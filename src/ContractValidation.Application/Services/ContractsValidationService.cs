@@ -1,8 +1,8 @@
-﻿using ContractValidation.Applications.Common;
+﻿using ContractValidation.Application.Common;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 
-namespace ContractValidation.Applications.Services;
+namespace ContractValidation.Application.Services;
 
 public class ContractsValidationService : IContractsValidationService
 {
@@ -17,12 +17,15 @@ public class ContractsValidationService : IContractsValidationService
 		if (!isValid)
 		{
 			errors.AddRange(validationResults.Select(r => r.ErrorMessage));
+			CopyNonListProperties(input, invalidModel);
+			input = null;
 		}
-
-		CopyNonListProperties(input, invalidModel);
-
-		var nestedErrors = ValidateListProperties(input, invalidModel);
-		errors.AddRange(nestedErrors);
+		else
+		{
+			CopyNonListProperties(input, invalidModel);
+			var nestedErrors = ValidateListProperties(input, invalidModel);
+			errors.AddRange(nestedErrors);
+		}
 
 		return ValidationResult<T>.Result(input, invalidModel, errors);
 	}
@@ -90,7 +93,7 @@ public class ContractsValidationService : IContractsValidationService
 			{
 				property.SetValue(invalidModel, filterInvalidList);
 			}
-			property.SetValue(model, filteredList); 
+			property.SetValue(model, filteredList);
 		}
 
 		return errors;

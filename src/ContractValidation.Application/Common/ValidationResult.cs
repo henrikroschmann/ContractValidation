@@ -1,4 +1,4 @@
-﻿namespace ContractValidation.Applications.Common;
+﻿namespace ContractValidation.Application.Common;
 
 /// <summary>
 /// Represents the result of a validation operation.
@@ -9,7 +9,7 @@ public sealed class ValidationResult<T>
 	public T? InvalidValue { get; }
 	public List<string> Errors { get; }
 	public bool IsValid => Errors == null || Errors.Count == 0;
-	
+
 	private ValidationResult(T? value, T? invalidValue, List<string> errors)
 	{
 		Value = value;
@@ -21,11 +21,11 @@ public sealed class ValidationResult<T>
 
 	public ValidationResult<T> OnSuccess(Action<T> action)
 	{
-		if (!object.Equals(Value, default(T)))
+		if (!Equals(Value, default(T)))
 		{
 			action(Value!);
 		}
-		
+
 		return this;
 	}
 
